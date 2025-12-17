@@ -1,6 +1,6 @@
 package net.thevpc.samples.springnuts.moduleai.ws;
 
-import net.thevpc.samples.springnuts.moduleai.service.impl.service.VectorStoreService;
+import net.thevpc.samples.springnuts.moduleai.service.api.IVectorStoreService;  // ← MODIFICATION
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +16,8 @@ import java.util.*;
 @Slf4j
 public class AnomalyController {
 
-    private final VectorStoreService vectorStoreService;
+    private final IVectorStoreService vectorStoreService;  // ← MODIFICATION
 
-    /**
-     * GET /api/anomalies - Récupérer les anomalies détectées
-     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAnomalies(
             @RequestParam(defaultValue = "10") int limit,
@@ -60,9 +57,6 @@ public class AnomalyController {
         }
     }
 
-    /**
-     * GET /api/anomalies/by-ip - Anomalies par IP
-     */
     @GetMapping("/by-ip/{sourceIp}")
     public ResponseEntity<Map<String, Object>> getAnomaliesByIp(
             @PathVariable String sourceIp,
@@ -95,9 +89,6 @@ public class AnomalyController {
         }
     }
 
-    /**
-     * POST /api/anomalies/search-timerange - Recherche par plage temporelle
-     */
     @PostMapping("/search-timerange")
     public ResponseEntity<Map<String, Object>> searchByTimeRange(@RequestBody TimeRangeRequest request) {
         try {

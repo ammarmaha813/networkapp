@@ -5,12 +5,13 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
+import net.thevpc.samples.springnuts.moduleai.service.api.IRAGService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class RAGService {
+public class RAGService implements IRAGService {
 
     private final ChatModel chatModel;
     private final VectorStoreService vectorStoreService;

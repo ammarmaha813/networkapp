@@ -7,6 +7,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
+import net.thevpc.samples.springnuts.moduleai.service.api.IVectorStoreService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class VectorStoreService {
+public class VectorStoreService implements IVectorStoreService {
 
     private final VectorStore vectorStore;
 

@@ -13,5 +13,6 @@
     <modules>
         <module>app-jar</module>
         <module>app-war</module>
+        <module>app-jar-module-ai</module>
     </modules>
 </project>

@@ -1,6 +1,6 @@
 package net.thevpc.samples.springnuts.moduleai.ws;
 
-import net.thevpc.samples.springnuts.moduleai.service.impl.service.RAGService;
+import net.thevpc.samples.springnuts.moduleai.service.api.IRAGService;  // ← MODIFICATION
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +10,9 @@ import java.util.Map;
 @RequestMapping("/ask")
 public class ChatController {
 
-    private final RAGService ragService;
+    private final IRAGService ragService;  // ← MODIFICATION
 
-    public ChatController(RAGService ragService) {
+    public ChatController(IRAGService ragService) {  // ← MODIFICATION
         this.ragService = ragService;
     }
 

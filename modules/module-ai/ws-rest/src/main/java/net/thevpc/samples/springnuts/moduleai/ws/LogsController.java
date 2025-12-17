@@ -1,7 +1,7 @@
 package net.thevpc.samples.springnuts.moduleai.ws;
 
 import net.thevpc.samples.springnuts.moduleai.model.ThreatResult;
-import net.thevpc.samples.springnuts.moduleai.service.impl.service.LogIngestionService;
+import net.thevpc.samples.springnuts.moduleai.service.api.ILogIngestionService;  // ← MODIFICATION
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +12,10 @@ import java.util.List;
 @RequestMapping("/logs")
 public class LogsController {
 
-    private final LogIngestionService logIngestionService;
+    private final ILogIngestionService logIngestionService;  // ← MODIFICATION
     private final List<ThreatResult> anomalies = new ArrayList<>();
 
-    public LogsController(LogIngestionService logIngestionService) {
+    public LogsController(ILogIngestionService logIngestionService) {  // ← MODIFICATION
         this.logIngestionService = logIngestionService;
     }
 
