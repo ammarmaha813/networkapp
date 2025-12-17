@@ -12,5 +12,6 @@
     </properties>
     <modules>
         <module>module-a</module>
+        <module>module-ai</module>
     </modules>
 </project>
