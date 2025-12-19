@@ -13,5 +13,6 @@
     <modules>
         <module>module-a</module>
         <module>module-ai</module>
+        <module>module-helm</module>
     </modules>
 </project>

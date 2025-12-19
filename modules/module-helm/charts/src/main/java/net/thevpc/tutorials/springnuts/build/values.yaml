@@ -1,0 +1,52 @@
+# Default values
+replicaCount: 3
+
+image:
+  repository: yourorg/network-security-platform
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: security.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+postgresql:
+  enabled: true
+  auth:
+    username: postgres
+    password: postgres123
+    database: network_security
+
+keycloak:
+  enabled: true
+  auth:
+    adminUser: admin
+    adminPassword: admin123
+
+redis:
+  enabled: true

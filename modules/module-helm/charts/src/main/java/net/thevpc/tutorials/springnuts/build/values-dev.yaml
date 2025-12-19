@@ -1,0 +1,32 @@
+# Development environment
+replicaCount: 1
+
+image:
+  repository: yourorg/network-security-platform
+  tag: "dev"
+
+autoscaling:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+postgresql:
+  primary:
+    persistence:
+      size: 10Gi
+
+ingress:
+  hosts:
+    - host: security-dev.example.com
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: "development"
+  - name: LOGGING_LEVEL_ROOT
+    value: "DEBUG"

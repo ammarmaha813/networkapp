@@ -1,6 +1,6 @@
 package net.thevpc.samples.springnuts.moduleai.ws;
 
-import net.thevpc.samples.springnuts.moduleai.service.api.IVectorStoreService;  // ← MODIFICATION
+import net.thevpc.samples.springnuts.moduleai.service.api.IVectorStoreService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,11 @@ import java.util.*;
 @Slf4j
 public class AnomalyController {
 
-    private final IVectorStoreService vectorStoreService;  // ← MODIFICATION
+    private final IVectorStoreService vectorStoreService;
 
+    /**
+     * GET /api/anomalies - Récupère les anomalies par sévérité
+     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAnomalies(
             @RequestParam(defaultValue = "10") int limit,
@@ -41,6 +44,7 @@ public class AnomalyController {
                         map.put("source_ip", doc.getMetadata().get("source_ip"));
                         map.put("destination_ip", doc.getMetadata().get("destination_ip"));
                         map.put("severity", doc.getMetadata().get("severity"));
+                        map.put("action", doc.getMetadata().get("action"));
                         map.put("content", doc.getText());
                         return map;
                     })
@@ -57,6 +61,9 @@ public class AnomalyController {
         }
     }
 
+    /**
+     * GET /api/anomalies/by-ip/{sourceIp} - Récupère les logs par IP
+     */
     @GetMapping("/by-ip/{sourceIp}")
     public ResponseEntity<Map<String, Object>> getAnomaliesByIp(
             @PathVariable String sourceIp,
@@ -89,8 +96,54 @@ public class AnomalyController {
         }
     }
 
+    /**
+     * ✅ ENDPOINT GET MANQUANT CORRIGÉ - CETTE MÉTHODE CORRIGE L'ERREUR HTTP 405 !
+     * GET /api/anomalies/search-timerange - Recherche par plage temporelle avec paramètres URL
+     */
+    @GetMapping("/search-timerange")
+    public ResponseEntity<Map<String, Object>> searchByTimeRangeGet(
+            @RequestParam(required = false, defaultValue = "security threats") String query,
+            @RequestParam(required = true) String startTime,
+            @RequestParam(required = true) String endTime,
+            @RequestParam(defaultValue = "10") int limit) {
+        try {
+            log.info("GET search-timerange appelé avec query={}, startTime={}, endTime={}", query, startTime, endTime);
+
+            List<Document> logs = vectorStoreService.searchByTimeRange(query, startTime, endTime, limit);
+
+            List<Map<String, Object>> results = logs.stream()
+                    .map(doc -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("log_id", doc.getMetadata().get("log_id"));
+                        map.put("timestamp", doc.getMetadata().get("timestamp"));
+                        map.put("source_ip", doc.getMetadata().get("source_ip"));
+                        map.put("destination_ip", doc.getMetadata().get("destination_ip"));
+                        map.put("severity", doc.getMetadata().get("severity"));
+                        map.put("action", doc.getMetadata().get("action"));
+                        map.put("content", doc.getText());
+                        return map;
+                    })
+                    .toList();
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "method", "GET",
+                    "time_range", Map.of("start", startTime, "end", endTime),
+                    "query", query,
+                    "count", results.size(),
+                    "logs", results));
+        } catch (Exception e) {
+            log.error("Erreur lors de la recherche temporelle GET", e);
+            return ResponseEntity.status(500)
+                    .body(Map.of("status", "error", "message", e.getMessage()));
+        }
+    }
+
+    /**
+     * POST /api/anomalies/search-timerange - Recherche par plage temporelle avec body JSON
+     */
     @PostMapping("/search-timerange")
-    public ResponseEntity<Map<String, Object>> searchByTimeRange(@RequestBody TimeRangeRequest request) {
+    public ResponseEntity<Map<String, Object>> searchByTimeRangePost(@RequestBody TimeRangeRequest request) {
         try {
             List<Document> logs = vectorStoreService.searchByTimeRange(
                     request.getQuery(),
@@ -106,6 +159,7 @@ public class AnomalyController {
                         map.put("source_ip", doc.getMetadata().get("source_ip"));
                         map.put("destination_ip", doc.getMetadata().get("destination_ip"));
                         map.put("severity", doc.getMetadata().get("severity"));
+                        map.put("action", doc.getMetadata().get("action"));
                         map.put("content", doc.getText());
                         return map;
                     })
@@ -113,11 +167,12 @@ public class AnomalyController {
 
             return ResponseEntity.ok(Map.of(
                     "status", "success",
+                    "method", "POST",
                     "time_range", Map.of("start", request.getStartTime(), "end", request.getEndTime()),
                     "count", results.size(),
                     "logs", results));
         } catch (Exception e) {
-            log.error("Erreur lors de la recherche temporelle", e);
+            log.error("Erreur lors de la recherche temporelle POST", e);
             return ResponseEntity.status(500)
                     .body(Map.of("status", "error", "message", e.getMessage()));
         }

@@ -1,0 +1,21 @@
+# modules/module-helm/kubernetes/base/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: security-system
+
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml
+  - secrets.yaml
+  - serviceaccount.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: network-security-platform
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+  - name: network-security-platform
+    newTag: 1.0.0
